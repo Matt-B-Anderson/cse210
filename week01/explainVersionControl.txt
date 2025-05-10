@@ -1,0 +1,19 @@
+Version control is a system or process that records changes made to files with the ability to bring back specific versions. 
+Rather than saving multiple different versions of one file the system contains snapshots of each file in a repository where you can veiw its history, 
+compare the difference in versions and restore the file to a previous version whenever needed.
+
+The most obvious benefit of version control is being able to colloborate more effectively on a project.
+If you were to rely on saving the same file over and over you would have to make sure that everyone on the project had all of those files on their machine at all times.
+Version control allows all members of a project to have access to all changes made to a file and its history. 
+You can even see who made what changes were made so you can more effectively troubleshoot any issues or ask someone specifically about the changes they made.
+
+An example of version control within a software delopment team would be the use of feature branches.
+Usually you would have the main form of a project in a main or master folder, and a w.i.p. folder such as develop.
+With version control you are able to make symultaneous changes to the files that are in develop with the use of branches.
+These branches are usually feature branches; branches that contain all the files from develop, but with the purpose to introduce new features.
+If my project needs a login page and an home page, which will both be displayed from the same file, I can work on the login page while my teammate works on the home page.
+When one of us finished we would create a pull request to the develop branch and then the other would pull down those changes to update their local repository.
+
+One of my favorite commands is git stash with its companion git stash apply{0}.
+Git stash allows you to take any changes that you have made and temporarily store them and re-apply them later.
+This is especially useful if you are working on changes that you have not commited and maybe don't want to yet, but need to pull in changes from a merge.
