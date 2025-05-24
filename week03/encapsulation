@@ -1,0 +1,59 @@
+## Encapsulation
+
+Encapsulation is a key principle in programming, especially in object-oriented design, where you bundle together data (variables) and methods (functions) that work on that data into one cohesive unit, usually a class. The idea behind encapsulation is to protect your object's internal state by hiding it from the outside. This way, you control how data is accessed or modified through specific methods, reducing the risk of unexpected issues and making your code easier to maintain.
+
+### Benefits of Encapsulation
+
+One major benefit of encapsulation is data integrity. It prevents external code from modifying your data directly in ways that could break your program or put it into an invalid state. Encapsulation also simplifies debugging and updating your code since the internal workings are isolated and controlled by clearly defined interfaces.
+
+### Practical Application
+
+A practical example of encapsulation could be managing user information in an application. For instance, user credentials like passwords should not be directly accessible. Instead, you would use methods to safely manage or validate these details.
+
+### Code Example
+
+Here's a C# code snippet from one of my projects—a journal application—that demonstrates encapsulation:
+
+```csharp
+public class JournalEntry
+{
+    private string _entryText;
+    private DateTime _entryDate;
+
+    public JournalEntry(DateTime date, string text)
+    {
+        _entryDate = date;
+        SetEntryText(text);
+    }
+
+    public DateTime GetEntryDate()
+    {
+        return _entryDate;
+    }
+
+    public string GetEntryText()
+    {
+        return _entryText;
+    }
+
+    public void SetEntryText(string text)
+    {
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            _entryText = text;
+        }
+        else
+        {
+            throw new ArgumentException("Journal entry cannot be empty.");
+        }
+    }
+}
+```
+
+### Explanation
+
+In this example:
+
+- `_entryText` and `_entryDate` are private fields. External code can't directly modify these fields.
+- Public methods (`GetEntryDate`, `GetEntryText`, and `SetEntryText`) control how external code accesses or modifies these fields.
+- This setup allows the class to enforce rules—for example, preventing an empty journal entry—which protects the data integrity of the journal application.
