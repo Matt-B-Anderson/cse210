@@ -1,33 +1,5 @@
-' Youtube Videos Class Diagram
-
-@startuml ClassDiagrams
-
-class Comment {
-    +string User
-    +string Text
-    +Comment(string user, string text)
-}
-
-class Video {
-    +string Title
-    +string User
-    +int LengthSeconds
-    -List<Comment> comments
-    +AddComment(Comment comment): void
-    +GetCommentCount(): int
-    +GetComments(): IEnumerable<Comment>
-}
-
-class Program {
-    +Main(string[] args): void
-}
-
-Video "1" *-- "*" Comment : contains
-Program ..> Video : uses
-Program ..> Comment : uses
-
-
 ' Online Ordering Class Diagram
+@startuml OnlineOrdering
 
 class Product {
   -string _name
@@ -75,5 +47,35 @@ Customer "1" --> "1" Address : has
 Order "1" --> "*" Product : contains
 Order "1" --> "1" Customer : for
 Program ..> Order : uses
+
+@enduml
+
+' Youtube Videos Class Diagram
+
+@startuml YoutubeVideos
+
+class Comment {
+    +string User
+    +string Text
+    +Comment(string user, string text)
+}
+
+class Video {
+    +string Title
+    +string User
+    +int LengthSeconds
+    -List<Comment> comments
+    +AddComment(Comment comment): void
+    +GetCommentCount(): int
+    +GetComments(): IEnumerable<Comment>
+}
+
+class Program {
+    +Main(string[] args): void
+}
+
+Video "1" *-- "*" Comment : contains
+Program ..> Video : uses
+Program ..> Comment : uses
 
 @enduml
