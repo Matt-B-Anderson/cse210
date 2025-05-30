@@ -76,7 +76,7 @@ class Program
             Console.WriteLine($"Comments ({video.GetCommentCount()}):");
             foreach (var comment in video.GetComments())
             {
-                Console.WriteLine($"\t{comment.Author}: {comment.Text}");
+                Console.WriteLine($"\t{comment.User}: {comment.Text}");
             }
             Console.WriteLine(new string('-', 40));
         }
