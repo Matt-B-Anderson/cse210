@@ -1,0 +1,79 @@
+' Youtube Videos Class Diagram
+
+@startuml ClassDiagrams
+
+class Comment {
+    +string User
+    +string Text
+    +Comment(string user, string text)
+}
+
+class Video {
+    +string Title
+    +string User
+    +int LengthSeconds
+    -List<Comment> comments
+    +AddComment(Comment comment): void
+    +GetCommentCount(): int
+    +GetComments(): IEnumerable<Comment>
+}
+
+class Program {
+    +Main(string[] args): void
+}
+
+Video "1" *-- "*" Comment : contains
+Program ..> Video : uses
+Program ..> Comment : uses
+
+
+' Online Ordering Class Diagram
+
+class Product {
+  -string _name
+  -string _productId
+  -double _price
+  -int _quantity
+  +Product(string, string, double, int)
+  +GetTotalCost(): double
+}
+
+class Address {
+  -string _street
+  -string _city
+  -string _stateOrProvince
+  -string _country
+  +Address(string, string, string, string)
+  +IsInUSA(): bool
+  +ToString(): string
+}
+
+class Customer {
+  -string _name
+  -Address _address
+  +Customer(string, Address)
+  +LivesInUSA(): bool
+  +Name
+  +Address
+}
+
+class Order {
+  -List<Product> _products
+  -Customer _customer
+  +Order(Customer)
+  +AddProduct(Product): void
+  +CalculateTotalCost(): double
+  +GetPackingLabel(): string
+  +GetShippingLabel(): string
+}
+
+class Program {
+  +Main(): void
+}
+
+Customer "1" --> "1" Address : has
+Order "1" --> "*" Product : contains
+Order "1" --> "1" Customer : for
+Program ..> Order : uses
+
+@enduml
