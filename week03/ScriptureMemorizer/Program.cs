@@ -123,7 +123,7 @@ namespace ScriptureMemorizer
             if (userSelection == "1")
             {
                 Console.WriteLine();
-                Console.WriteLine("Please enter a Scripture reference.");
+                Console.WriteLine("Please enter a Scripture reference, ex: 2Nephi 2:1, 1 Nephi 22:22-23");
                 string scriptureInput = Console.ReadLine();
                 Console.WriteLine();
                 Console.WriteLine("Please enter the scripture text");
