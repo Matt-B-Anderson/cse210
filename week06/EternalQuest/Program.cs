@@ -144,7 +144,7 @@ class ChecklistGoal : Goal
     {
         _targetCount = targetCount;
         _bonusPoints = bonus;
-        Period       = period;
+        Period = period;
     }
 
     public override int RecordEvent()
@@ -187,12 +187,12 @@ class ChecklistGoal : Goal
 
     public static ChecklistGoal FromCsv(string[] parts)
     {
-        var name        = parts[1];
-        var desc        = parts[2];
-        var pointsPer   = int.Parse(parts[3]);
+        var name = parts[1];
+        var desc = parts[2];
+        var pointsPer = int.Parse(parts[3]);
         var targetCount = int.Parse(parts[4]);
-        var bonus       = int.Parse(parts[5]);
-        var period      = Enum.Parse<Recurrence>(parts[6], ignoreCase:true);
+        var bonus = int.Parse(parts[5]);
+        var period = Enum.Parse<Recurrence>(parts[6], ignoreCase: true);
 
         return new ChecklistGoal(name, desc, pointsPer, targetCount, bonus, period);
     }
@@ -261,12 +261,12 @@ class Program
                 break;
             case "3":
                 int target = ReadInt("How many times to complete? ");
-                int bonus  = ReadInt("Bonus on final completion: ");
+                int bonus = ReadInt("Bonus on final completion: ");
                 Console.Write("Period (D)aily or (W)eekly? ");
                 var key = Console.ReadKey().Key;
                 Console.WriteLine();
-                var period = (key == ConsoleKey.W) 
-                    ? Recurrence.Weekly 
+                var period = (key == ConsoleKey.W)
+                    ? Recurrence.Weekly
                     : Recurrence.Daily;
                 _goals.Add(new ChecklistGoal(
                     name, desc, pts,
@@ -281,13 +281,13 @@ class Program
 
         Console.WriteLine("Goal created!");
     }
-    
+
     static string Escape(string s)
-{
-    if (s.Contains(",") || s.Contains("\""))
-        return "\"" + s.Replace("\"", "\"\"") + "\"";
-    return s;
-}
+    {
+        if (s.Contains(",") || s.Contains("\""))
+            return "\"" + s.Replace("\"", "\"\"") + "\"";
+        return s;
+    }
 
     static string[] SplitCsv(string line)
     {
@@ -315,7 +315,7 @@ class Program
         return result.ToArray();
     }
 
-private static int ReadInt(string prompt)
+    private static int ReadInt(string prompt)
     {
         while (true)
         {
@@ -327,64 +327,64 @@ private static int ReadInt(string prompt)
     }
 
     static void RecordEvent()
-{
-    if (_goals.Count == 0)
     {
-        Console.WriteLine("No goals in memory—please load your goals first.");
-        return;
+        if (_goals.Count == 0)
+        {
+            Console.WriteLine("No goals in memory—please load your goals first.");
+            return;
+        }
+
+        Console.WriteLine("\nWhich goal did you complete? (type its exact name)");
+        foreach (var g in _goals)
+            Console.WriteLine($" • {g.Name}   {g.GetStatus()}");
+
+        Console.Write("Goal name: ");
+        string choice = Console.ReadLine() ?? "";
+        var goal = _goals
+            .FirstOrDefault(g => g.Name.Equals(choice, StringComparison.OrdinalIgnoreCase));
+
+        if (goal == null)
+        {
+            Console.WriteLine("No matching goal found.");
+            return;
+        }
+
+        if (goal is SimpleGoal && goal.IsComplete)
+        {
+            Console.WriteLine("That simple goal is already completed.");
+            return;
+        }
+
+        Console.Write("Describe the event: ");
+        string evDesc = Console.ReadLine() ?? "";
+
+        int earned = goal.RecordEvent();
+        if (earned == 0)
+        {
+            Console.WriteLine("No points awarded.");
+            return;
+        }
+
+        _score += earned;
+
+        var rec = new EventRecord
+        {
+            Timestamp = DateTime.Now,
+            GoalName = goal.Name,
+            EventDescription = evDesc,
+            PointsEarned = earned,
+            TotalPoints = _score
+        };
+        _eventLog.Add(rec);
+
+        using var writer = new StreamWriter(EventsFile, append: true);
+        if (new FileInfo(EventsFile).Length == 0)
+            writer.WriteLine("Timestamp,GoalName,EventDescription,PointsEarned,TotalPoints");
+
+        writer.WriteLine($"{rec.Timestamp:o},{Escape(rec.GoalName)},{Escape(rec.EventDescription)},{rec.PointsEarned},{rec.TotalPoints}");
+
+        Console.WriteLine($"Event recorded! You earned {earned} points (Total: {_score}).");
     }
-
-    Console.WriteLine("\nWhich goal did you complete? (type its exact name)");
-    foreach (var g in _goals)
-        Console.WriteLine($" • {g.Name}   {g.GetStatus()}");
-
-    Console.Write("Goal name: ");
-    string choice = Console.ReadLine() ?? "";
-    var goal = _goals
-        .FirstOrDefault(g => g.Name.Equals(choice, StringComparison.OrdinalIgnoreCase));
-
-    if (goal == null)
-    {
-        Console.WriteLine("No matching goal found.");
-        return;
-    }
-
-    if (goal is SimpleGoal && goal.IsComplete)
-    {
-        Console.WriteLine("That simple goal is already completed.");
-        return;
-    }
-
-    Console.Write("Describe the event: ");
-    string evDesc = Console.ReadLine() ?? "";
-
-    int earned = goal.RecordEvent();
-    if (earned == 0)
-    {
-        Console.WriteLine("No points awarded.");
-        return;
-    }
-
-    _score += earned;
-
-    var rec = new EventRecord
-    {
-        Timestamp        = DateTime.Now,
-        GoalName         = goal.Name,
-        EventDescription = evDesc,
-        PointsEarned     = earned,
-        TotalPoints      = _score
-    };
-    _eventLog.Add(rec);
-
-    using var writer = new StreamWriter(EventsFile, append: true);
-    if (new FileInfo(EventsFile).Length == 0)
-        writer.WriteLine("Timestamp,GoalName,EventDescription,PointsEarned,TotalPoints");
-
-    writer.WriteLine($"{rec.Timestamp:o},{Escape(rec.GoalName)},{Escape(rec.EventDescription)},{rec.PointsEarned},{rec.TotalPoints}");
-
-    Console.WriteLine($"Event recorded! You earned {earned} points (Total: {_score}).");
-}
 
     static void DisplayGoals()
     {
@@ -425,66 +425,66 @@ private static int ReadInt(string prompt)
             }
             else if (g is ChecklistGoal cg)
             {
-            writer.WriteLine($"Checklist," + $"{Escape(cg.Name)}," + $"{Escape(cg.Description)}," + $"{cg.BasePoints}," + $"{cg.TargetCount}," + $"{cg.BonusPoints}," + $"{cg.PeriodType}");
+                writer.WriteLine($"Checklist," + $"{Escape(cg.Name)}," + $"{Escape(cg.Description)}," + $"{cg.BasePoints}," + $"{cg.TargetCount}," + $"{cg.BonusPoints}," + $"{cg.PeriodType}");
             }
         }
 
         Console.WriteLine($"Saved {_goals.Count} goals to {file}");
     }
 
-static void LoadEvents()
-{
-    if (!File.Exists(EventsFile))
+    static void LoadEvents()
     {
-        Console.WriteLine("No past events to load.");
-        return;
-    }
-
-    var lines = File.ReadAllLines(EventsFile);
-    if (lines.Length < 2)
-    {
-        Console.WriteLine("No event data found in CSV.");
-        return;
-    }
-
-    _eventLog.Clear();
-    foreach (var line in lines.Skip(1))
-    {
-        if (string.IsNullOrWhiteSpace(line)) continue;
-        var parts = SplitCsv(line);
-
-        var rec = new EventRecord
+        if (!File.Exists(EventsFile))
         {
-            Timestamp        = DateTime.Parse(parts[0]),
-            GoalName         = parts[1],
-            EventDescription = parts[2],
-            PointsEarned     = int.Parse(parts[3]),
-            TotalPoints      = int.Parse(parts[4])
-        };
-        _eventLog.Add(rec);
-    }
-
-    foreach (var rec in _eventLog)
-    {
-        var goal = _goals
-            .FirstOrDefault(g => 
-                g.Name.Equals(rec.GoalName, StringComparison.OrdinalIgnoreCase));
-        if (goal is SimpleGoal sg)
-        {
-            sg.RecordEvent();
+            Console.WriteLine("No past events to load.");
+            return;
         }
-    }
-    foreach (var cg in _goals.OfType<ChecklistGoal>())
-    {
-        cg.RecalculateCount(_eventLog);
-    }
 
-    _score = _eventLog.Count > 0
-        ? _eventLog[^1].TotalPoints
-        : 0;
+        var lines = File.ReadAllLines(EventsFile);
+        if (lines.Length < 2)
+        {
+            Console.WriteLine("No event data found in CSV.");
+            return;
+        }
 
-    Console.WriteLine($"Loaded {_eventLog.Count} event(s). Current score: {_score}");
-}
+        _eventLog.Clear();
+        foreach (var line in lines.Skip(1))
+        {
+            if (string.IsNullOrWhiteSpace(line)) continue;
+            var parts = SplitCsv(line);
+
+            var rec = new EventRecord
+            {
+                Timestamp = DateTime.Parse(parts[0]),
+                GoalName = parts[1],
+                EventDescription = parts[2],
+                PointsEarned = int.Parse(parts[3]),
+                TotalPoints = int.Parse(parts[4])
+            };
+            _eventLog.Add(rec);
+        }
+
+        foreach (var rec in _eventLog)
+        {
+            var goal = _goals
+                .FirstOrDefault(g =>
+                    g.Name.Equals(rec.GoalName, StringComparison.OrdinalIgnoreCase));
+            if (goal is SimpleGoal sg)
+            {
+                sg.RecordEvent();
+            }
+        }
+        foreach (var cg in _goals.OfType<ChecklistGoal>())
+        {
+            cg.RecalculateCount(_eventLog);
+        }
+
+        _score = _eventLog.Count > 0
+            ? _eventLog[^1].TotalPoints
+            : 0;
+
+        Console.WriteLine($"Loaded {_eventLog.Count} event(s). Current score: {_score}");
+    }
 
     static void LoadGoals()
     {
