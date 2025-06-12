@@ -327,53 +327,64 @@ private static int ReadInt(string prompt)
     }
 
     static void RecordEvent()
+{
+    if (_goals.Count == 0)
     {
-        if (_goals.Count == 0)
-        {
-            Console.WriteLine("No goals in memory—please load your goals first.");
-            return;
-        }
-
-        Console.WriteLine("\nWhich goal did you complete? (type its exact name)");
-        foreach (var g in _goals)
-            Console.WriteLine($" • {g.Name}   {g.GetStatus()}");
-
-        Console.Write("Goal name: ");
-        string choice = Console.ReadLine() ?? "";
-        var goal = _goals
-            .FirstOrDefault(g => g.Name.Equals(choice, StringComparison.OrdinalIgnoreCase));
-
-        if (goal == null)
-        {
-            Console.WriteLine("No matching goal found.");
-            return;
-        }
-
-        Console.Write("Describe the event: ");
-        string evDesc = Console.ReadLine() ?? "";
-
-        int earned = goal.RecordEvent();
-        _score += earned;
-
-        var rec = new EventRecord
-        {
-            Timestamp = DateTime.Now,
-            GoalName = goal.Name,
-            EventDescription = evDesc,
-            PointsEarned = earned,
-            TotalPoints = _score
-        };
-        _eventLog.Add(rec);
-
-        using var writer = new StreamWriter(EventsFile, append: true);
-        if (new FileInfo(EventsFile).Length == 0)
-        {
-            writer.WriteLine("Timestamp,GoalName,EventDescription,PointsEarned,TotalPoints");
-        }
-        writer.WriteLine($"{rec.Timestamp:o},{Escape(rec.GoalName)},{Escape(rec.EventDescription)},{rec.PointsEarned},{rec.TotalPoints}");
-
-        Console.WriteLine($"Event recorded! You earned {earned} points (Total: {_score}).");
+        Console.WriteLine("No goals in memory—please load your goals first.");
+        return;
     }
+
+    Console.WriteLine("\nWhich goal did you complete? (type its exact name)");
+    foreach (var g in _goals)
+        Console.WriteLine($" • {g.Name}   {g.GetStatus()}");
+
+    Console.Write("Goal name: ");
+    string choice = Console.ReadLine() ?? "";
+    var goal = _goals
+        .FirstOrDefault(g => g.Name.Equals(choice, StringComparison.OrdinalIgnoreCase));
+
+    if (goal == null)
+    {
+        Console.WriteLine("No matching goal found.");
+        return;
+    }
+
+    if (goal is SimpleGoal && goal.IsComplete)
+    {
+        Console.WriteLine("That simple goal is already completed.");
+        return;
+    }
+
+    Console.Write("Describe the event: ");
+    string evDesc = Console.ReadLine() ?? "";
+
+    int earned = goal.RecordEvent();
+    if (earned == 0)
+    {
+        Console.WriteLine("No points awarded.");
+        return;
+    }
+
+    _score += earned;
+
+    var rec = new EventRecord
+    {
+        Timestamp        = DateTime.Now,
+        GoalName         = goal.Name,
+        EventDescription = evDesc,
+        PointsEarned     = earned,
+        TotalPoints      = _score
+    };
+    _eventLog.Add(rec);
+
+    using var writer = new StreamWriter(EventsFile, append: true);
+    if (new FileInfo(EventsFile).Length == 0)
+        writer.WriteLine("Timestamp,GoalName,EventDescription,PointsEarned,TotalPoints");
+
+    writer.WriteLine($"{rec.Timestamp:o},{Escape(rec.GoalName)},{Escape(rec.EventDescription)},{rec.PointsEarned},{rec.TotalPoints}");
+
+    Console.WriteLine($"Event recorded! You earned {earned} points (Total: {_score}).");
+}
 
     static void DisplayGoals()
     {
